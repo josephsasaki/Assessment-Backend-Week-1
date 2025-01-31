@@ -42,7 +42,7 @@ def between():
     try:
         first_date = convert_to_datetime(first)
         last_date = convert_to_datetime(last)
-    except ValueError:
+    except (ValueError, TypeError):
         return {"error": "Unable to convert value to datetime."}, 400
     # Calculate days difference
     days_between = get_days_between(first_date, last_date)
@@ -61,7 +61,7 @@ def weekday():
     # Convert to datetime object
     try:
         passed_date = convert_to_datetime(date_str)
-    except ValueError:
+    except (ValueError, TypeError):
         return {"error": "Unable to convert value to datetime."}, 400
     day_of_week = get_day_of_week_on(passed_date)
     add_to_history(request)
@@ -100,7 +100,7 @@ def current_age():
         return {"error": "Date parameter is required."}, 400
     try:
         passed_date = convert_to_datetime(date_str)
-    except ValueError:
+    except (ValueError, TypeError):
         return {"error": "Value for data parameter is invalid."}, 400
     age = get_current_age(passed_date)
     add_to_history(request)
