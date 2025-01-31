@@ -2,9 +2,9 @@
 
 # pylint: disable = no-name-in-module
 
-from datetime import datetime, date
+from datetime import datetime
 
-from flask import Flask, Response, request, jsonify
+from flask import Flask, request, jsonify
 
 from date_functions import (convert_to_datetime, get_day_of_week_on,
                             get_days_between, get_current_age)
@@ -42,7 +42,7 @@ def between():
     try:
         first_date = convert_to_datetime(first)
         last_date = convert_to_datetime(last)
-    except:
+    except ValueError:
         return {"error": "Unable to convert value to datetime."}, 400
     # Calculate days difference
     days_between = get_days_between(first_date, last_date)
@@ -55,17 +55,17 @@ def weekday():
     """Returns the day of the week a specific date is"""
     # Check the request parameters are valid
     request_data = request.get_json()
-    date = request_data.get("date")
-    if date is None:
+    date_str = request_data.get("date")
+    if date_str is None:
         return {"error": "Missing required data."}, 400
     # Convert to datetime object
     try:
-        passed_date = convert_to_datetime(date)
-    except:
+        passed_date = convert_to_datetime(date_str)
+    except ValueError:
         return {"error": "Unable to convert value to datetime."}, 400
-    weekday = get_day_of_week_on(passed_date)
+    day_of_week = get_day_of_week_on(passed_date)
     add_to_history(request)
-    return {"weekday": weekday}, 200
+    return {"weekday": day_of_week}, 200
 
 
 @app.route("/history", methods=["GET", "DELETE"])
@@ -84,11 +84,10 @@ def history():
         number = int(number)
         add_to_history(request)
         return app_history[-number:][::-1], 200
-    elif request.method == "DELETE":
+    if request.method == "DELETE":
         app_history.clear()
         return {"status": "History cleared"}, 200
-    else:
-        return {"error": "Unable to convert value to datetime."}, 405
+    return {"error": "Unable to convert value to datetime."}, 405
 
 
 @app.route("/current_age", methods=["GET"])
@@ -96,12 +95,12 @@ def current_age():
     """Returns a current age in years based on a given birthdate."""
     # Check the request parameters are valid
     args = request.args.to_dict()
-    date = args.get("date")
-    if date is None:
+    date_str = args.get("date")
+    if date_str is None:
         return {"error": "Date parameter is required."}, 400
     try:
-        passed_date = convert_to_datetime(date)
-    except:
+        passed_date = convert_to_datetime(date_str)
+    except ValueError:
         return {"error": "Value for data parameter is invalid."}, 400
     age = get_current_age(passed_date)
     add_to_history(request)

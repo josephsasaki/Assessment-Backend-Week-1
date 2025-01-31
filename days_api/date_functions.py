@@ -7,12 +7,12 @@ def convert_to_datetime(date_val: str) -> datetime:
     """Converts a string formatted as DD.MM.YYYY to a datetime object."""
     try:
         return datetime.strptime(date_val, "%d.%m.%Y")
-    except:
+    except ValueError:
         pass
     try:
         return datetime.strptime(date_val, "%Y-%m-%d")
-    except ValueError:
-        raise ValueError("Unable to convert value to datetime.")
+    except ValueError as exc:
+        raise ValueError("Unable to convert value to datetime.") from exc
 
 
 def get_days_between(first: datetime, last: datetime) -> int:
