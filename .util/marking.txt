@@ -3,11 +3,11 @@ platform linux -- Python 3.12.8, pytest-8.3.4, pluggy-1.5.0
 rootdir: /home/runner/work/Assessment-Backend-Week-1/Assessment-Backend-Week-1
 collected 112 items
 
-days_api/test_api.py ......FF.....................F..................... [ 45%]
+days_api/test_api.py ................................................... [ 45%]
 ......................                                                   [ 65%]
 days_api/test_date_functions.py .......................................  [100%]
 
-======================== 3 failed, 109 passed in 0.28s =========================
+============================= 112 passed in 0.27s ==============================
 
 ------------------------------------
 Your code has been rated at 10.00/10
