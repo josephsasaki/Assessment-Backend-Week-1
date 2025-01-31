@@ -1,5 +1,5 @@
 ============================= test session starts ==============================
-platform linux -- Python 3.12.4, pytest-8.3.2, pluggy-1.5.0
+platform linux -- Python 3.12.8, pytest-8.3.4, pluggy-1.5.0
 rootdir: /home/runner/work/Assessment-Backend-Week-1/Assessment-Backend-Week-1
 collected 112 items
 
@@ -7,7 +7,7 @@ days_api/test_api.py FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF [ 45%]
 FFFFFFFFFFFFFFFFFFFFFF                                                   [ 65%]
 days_api/test_date_functions.py FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF  [100%]
 
-============================= 112 failed in 0.37s ==============================
+============================= 112 failed in 0.34s ==============================
 ************* Module app
 days_api/app.py:5:0: W0611: Unused date imported from datetime (unused-import)
 days_api/app.py:7:0: W0611: Unused Response imported from flask (unused-import)
@@ -28,5 +28,5 @@ days_api/date_functions.py:18:0: C0116: Missing function or method docstring (mi
 days_api/date_functions.py:18:20: W0613: Unused argument 'birthdate' (unused-argument)
 
 -----------------------------------
-Your code has been rated at 2.00/10
+Your code has been rated at 2.73/10
 
