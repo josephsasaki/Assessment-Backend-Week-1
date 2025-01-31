@@ -32,9 +32,19 @@ def index():
 @app.route("/between", methods=["POST"])
 def between():
     """Returns the number of days between two dates"""
+    # Check the request parameters are valid
     request_data = request.get_json()
-    first_date = convert_to_datetime(request_data.get("first"))
-    last_date = convert_to_datetime(request.get("last"))
+    first = request_data.get("first")
+    last = request_data.get("last")
+    if first is None or last is None:
+        return {"error": "Missing required data."}, 400
+    # Convert strings to datetime
+    try:
+        first_date = convert_to_datetime(first)
+        last_date = convert_to_datetime(last)
+    except:
+        return {"error": "Unable to convert value to datetime."}, 400
+    # Calculate days difference
     days_between = get_days_between(first_date, last_date)
     add_to_history(request)
     return {"days": days_between}, 200
@@ -43,28 +53,41 @@ def between():
 @app.route("/weekday", methods=["POST"])
 def weekday():
     """Returns the day of the week a specific date is"""
+    # Check the request parameters are valid
     request_data = request.get_json()
-    passed_date = convert_to_datetime(request_data.get("date"))
+    date = request_data.get("date")
+    if date is None:
+        return {"error": "Missing required data."}, 400
+    # Convert to datetime object
+    try:
+        passed_date = convert_to_datetime(date)
+    except:
+        return {"error": "Unable to convert value to datetime."}, 400
     weekday = get_day_of_week_on(passed_date)
     add_to_history(request)
     return {"weekday": weekday}, 200
 
 
-@app.route("/history/", methods=["GET", "DELETE"])
+@app.route("/history", methods=["GET", "DELETE"])
 def history():
     """GET: Returns details on the last number of requests to the API.
     DELETE: Deletes details of all previous requests to the API"""
     if request.method == "GET":
         args = request.args.to_dict()
         number = args.get("number")
-        if number not in range(1, 21):
-            return {"error": True, "message": "Number query parameter must be between 1 and 20 (inclusive)."}, 400
-        elif number is None:
+        if number is None:
             number = 5
-        return app_history[5:], 200
-    else:
+        elif not number.isnumeric():
+            return {"error": "Number must be an integer between 1 and 20."}, 400
+        elif int(number) not in range(1, 21):
+            return {"error": "Number must be an integer between 1 and 20."}, 400
+        history_to_return = app_history
+        return history_to_return, 200
+    elif request.method == "DELETE":
         app_history = []
         return {"status": "History cleared"}, 200
+    else:
+        return {"error": "Unable to convert value to datetime."}, 405
 
 
 @app.route("/current_age", methods=["GET"])
