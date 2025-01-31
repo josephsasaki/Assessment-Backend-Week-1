@@ -81,10 +81,11 @@ def history():
             return {"error": "Number must be an integer between 1 and 20."}, 400
         elif int(number) not in range(1, 21):
             return {"error": "Number must be an integer between 1 and 20."}, 400
-        history_to_return = app_history
-        return history_to_return, 200
+        number = int(number)
+        add_to_history(request)
+        return app_history[-number:][::-1], 200
     elif request.method == "DELETE":
-        app_history = []
+        app_history.clear()
         return {"status": "History cleared"}, 200
     else:
         return {"error": "Unable to convert value to datetime."}, 405
@@ -93,7 +94,18 @@ def history():
 @app.route("/current_age", methods=["GET"])
 def current_age():
     """Returns a current age in years based on a given birthdate."""
-    return
+    # Check the request parameters are valid
+    args = request.args.to_dict()
+    date = args.get("date")
+    if date is None:
+        return {"error": "Date parameter is required."}, 400
+    try:
+        passed_date = convert_to_datetime(date)
+    except:
+        return {"error": "Value for data parameter is invalid."}, 400
+    age = get_current_age(passed_date)
+    add_to_history(request)
+    return {"current_age": age}, 200
 
 
 if __name__ == "__main__":
