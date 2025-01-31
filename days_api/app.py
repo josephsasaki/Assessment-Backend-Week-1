@@ -29,36 +29,45 @@ def index():
     return jsonify({"message": "Welcome to the Days API."})
 
 
-@app.get("/between", methods=["POST"])
+@app.route("/between", methods=["POST"])
 def between():
     """Returns the number of days between two dates"""
     request_data = request.get_json()
-    first_date = convert_to_datetime(request.get("first"))
+    first_date = convert_to_datetime(request_data.get("first"))
     last_date = convert_to_datetime(request.get("last"))
     days_between = get_days_between(first_date, last_date)
+    add_to_history(request)
     return {"days": days_between}, 200
 
 
-@app.get("/weekday", methods=["POST"])
+@app.route("/weekday", methods=["POST"])
 def weekday():
     """Returns the day of the week a specific date is"""
     request_data = request.get_json()
-    passed_date = convert_to_datetime(request.get("date"))
+    passed_date = convert_to_datetime(request_data.get("date"))
     weekday = get_day_of_week_on(passed_date)
+    add_to_history(request)
     return {"weekday": weekday}, 200
 
 
-@app.get("/history/", methods=["GET", "DELETE"])
+@app.route("/history/", methods=["GET", "DELETE"])
 def history():
     """GET: Returns details on the last number of requests to the API.
     DELETE: Deletes details of all previous requests to the API"""
     if request.method == "GET":
-        ...
+        args = request.args.to_dict()
+        number = args.get("number")
+        if number not in range(1, 21):
+            return {"error": True, "message": "Number query parameter must be between 1 and 20 (inclusive)."}, 400
+        elif number is None:
+            number = 5
+        return app_history[5:], 200
     else:
-        ...
+        app_history = []
+        return {"status": "History cleared"}, 200
 
 
-@app.get("/current_age", methods=["GET"])
+@app.route("/current_age", methods=["GET"])
 def current_age():
     """Returns a current age in years based on a given birthdate."""
     return
